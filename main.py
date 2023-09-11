@@ -1,27 +1,37 @@
 from typing import List
 from fastapi import FastAPI
+import models
+from config.database import engine
 import schemas
+
 app = FastAPI()
+
+models.Base.metadata.create_all(engine)
+
 
 @app.get("/todos", response_model=List[schemas.TodoResponse])
 async def list():
-  return [
+    return [
         {'id': 1, 'user_id': 1, 'completed': False, 'title': 'This is title 1'},
         {'id': 2, 'user_id': 1, 'completed': False, 'title': 'This is title 2'}
     ]
 
+
 @app.post('/todos')
 async def create(request: schemas.TodoRequest):
-  return request
+    return request
 
-@app.get('/todos/{id}', response_model = schemas.TodoResponse)
+
+@app.get('/todos/{id}', response_model=schemas.TodoResponse)
 async def show(id: int):
-  return {'id': 1, 'user_id': 1, 'completed': False, 'title': 'This is title 1'}
+    return {'id': 1, 'user_id': 1, 'completed': False, 'title': 'This is title 1'}
+
 
 @app.put('/todos/{id}')
 async def update(id: int, request: schemas.TodoRequest):
-  return request
+    return request
+
 
 @app.delete('/todos/{id}')
 async def delete(id: int):
-  return id
+    return id
