@@ -8,7 +8,6 @@ class TodoRequest(BaseModel):
 
 class TodoResponse(TodoRequest):
     id: int
-
     # user_id: int
 
     class Config:

@@ -35,11 +35,11 @@ async def show(id: int, db: Session = Depends(get_db)):
 
 @app.put('/todos/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=TodoResponse)
 def update(id: int, request: TodoRequest, db: Session = Depends(get_db)):
-    todo = db.query(models.Todo).filter(models.Todo.id == id)
-    if not todo.first():
+    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+    if not todo:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"todo with id {id} not found.")
-
-    todo.update(title=request.title, completed=request.completed)
+    todo.title = request.title
+    todo.completed = request.completed
     db.commit()
     db.refresh(todo)
     return todo
