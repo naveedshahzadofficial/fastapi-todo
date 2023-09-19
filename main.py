@@ -35,14 +35,12 @@ async def show(id: int, db: Session = Depends(get_db)):
 
 @app.put('/todos/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=TodoResponse)
 def update(id: int, request: TodoRequest, db: Session = Depends(get_db)):
-    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
-    if not todo:
+    todo = db.query(models.Todo).filter(models.Todo.id == id)
+    if not todo.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"todo with id {id} not found.")
-    todo.title = request.title
-    todo.completed = request.completed
+    todo.update(dict(request), synchronize_session=False)
     db.commit()
-    db.refresh(todo)
-    return todo
+    return todo.first()
 
 
 @app.delete('/todos/{id}', status_code=status.HTTP_204_NO_CONTENT)
@@ -54,4 +52,3 @@ async def delete(id: int, db: Session = Depends(get_db)):
     todo.delete(synchronize_session=False)
     db.commit()
     return 'done'
-
