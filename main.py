@@ -1,11 +1,27 @@
 from typing import List
 from fastapi import FastAPI, Depends, status, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import models
 from config.database import engine, get_db
 from schemas import TodoRequest, TodoResponse
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.com",
+    "https://localhost.com",
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 models.Base.metadata.create_all(engine)
 
